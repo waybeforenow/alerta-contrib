@@ -29,45 +29,7 @@ class ServiceIntegration(PluginBase):
 
         return ret
 
-    def pre_receive(self, alert):
-        return alert
-
-    def status_change(self, alert, status, text, **kwargs):
-        INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
-
-        if status not in ["ack", "assign"]:
-            return
-
-        payload = {}
-
-        payload["message"] = "%s: %s alert for %s - %s is %s" % (
-            alert.environment,
-            alert.severity.capitalize(),
-            ",".join(alert.service),
-            alert.resource,
-            alert.event,
-        )
-        payload["alert_type"] = "acknowledged"
-        payload["entity_id"] = alert.id.replace("-", "")
-        payload["payload"] = alert.serialize
-
-        try:
-            LOG.debug(
-                requests.post(
-                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                    headers={"Content-Type": "application/json"},
-                    data=json.dumps(payload, default=str),
-                )
-            ).text
-        except Exception as e:
-            LOG.error("Error connecting to Zenduty: {}".format(e))
-
-    def post_receive(self, alert, **kwargs):
-        INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
-
-        if alert.repeat:
-            return
-
+    def _create_payload(self, alert):
         payload = {}
 
         payload["message"] = "%s: %s alert for %s - %s is %s" % (
@@ -81,14 +43,46 @@ class ServiceIntegration(PluginBase):
         payload["entity_id"] = alert.id.replace("-", "")
         payload["payload"] = alert.serialize
 
+        return payload
+
+    def pre_receive(self, alert):
+        return alert
+
+    def status_change(self, alert, status, text, **kwargs):
+        INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
+
+        if status not in ["ack"]:
+            return
+
+        payload = self._create_payload(alert)
+        payload["alert_type"] = "acknowledged"
+
         try:
-            LOG.debug(json.dumps(payload, default=str))
-            LOG.debug(
-                requests.post(
-                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                    headers={"Content-Type": "application/json"},
-                    data=json.dumps(payload, default=str),
-                ).text
+            r = requests.post(
+                "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                headers={"Content-Type": "application/json"},
+                data=json.dumps(payload, default=str),
             )
         except Exception as e:
             LOG.error("Error connecting to Zenduty: {}".format(e))
+
+        LOG.debug("Zenduty response: %s\n%s" % (r.status_code, r.text))
+
+    def post_receive(self, alert, **kwargs):
+        INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
+
+        if alert.repeat:
+            return
+
+        payload = self._create_payload(alert)
+
+        try:
+            r = requests.post(
+                "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                headers={"Content-Type": "application/json"},
+                data=json.dumps(payload, default=str),
+            )
+        except Exception as e:
+            LOG.error("Error connecting to Zenduty: {}".format(e))
+
+        LOG.debug("Zenduty response: %s\n%s" % (r.status_code, r.text))
