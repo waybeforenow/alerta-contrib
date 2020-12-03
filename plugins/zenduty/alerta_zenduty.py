@@ -1,3 +1,4 @@
+import json
 import logging
 import requests
 
@@ -53,7 +54,8 @@ class ServiceIntegration(PluginBase):
         LOG.debug(
             requests.post(
                 "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                json=payload,
+                headers={"Content-Type": "application/json"},
+                data=json.dumps(payload, default=str),
             )
         )
 
@@ -79,6 +81,7 @@ class ServiceIntegration(PluginBase):
         LOG.debug(
             requests.post(
                 "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                json=payload,
+                headers={"Content-Type": "application/json"},
+                data=json.dumps(payload, default=str),
             )
         )
