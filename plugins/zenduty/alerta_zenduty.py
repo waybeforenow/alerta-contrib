@@ -1,7 +1,6 @@
 import logging
 import requests
 
-INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
 
 try:
     from alerta.plugins import app  # alerta >= 5.0
@@ -30,6 +29,8 @@ class ServiceIntegration(PluginBase):
         return ret
 
     def post_receive(self, alert, **kwargs):
+        INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
+
         if alert.repeat:
             return
 
