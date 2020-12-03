@@ -58,7 +58,7 @@ class ServiceIntegration(PluginBase):
                     headers={"Content-Type": "application/json"},
                     data=json.dumps(payload, default=str),
                 )
-            )
+            ).text
         except Exception as e:
             LOG.error("Error connecting to Zenduty: {}".format(e))
 
@@ -87,7 +87,7 @@ class ServiceIntegration(PluginBase):
                     "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
                     headers={"Content-Type": "application/json"},
                     data=json.dumps(payload, default=str),
-                )
+                ).text
             )
         except Exception as e:
             LOG.error("Error connecting to Zenduty: {}".format(e))
