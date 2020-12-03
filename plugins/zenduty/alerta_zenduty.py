@@ -51,13 +51,16 @@ class ServiceIntegration(PluginBase):
         payload["entity_id"] = alert.id
         payload["payload"] = alert.serialize
 
-        LOG.debug(
-            requests.post(
-                "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                headers={"Content-Type": "application/json"},
-                data=json.dumps(payload, default=str),
+        try:
+            LOG.debug(
+                requests.post(
+                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                    headers={"Content-Type": "application/json"},
+                    data=json.dumps(payload, default=str),
+                )
             )
-        )
+        except Exception as e:
+            LOG.error("Error connecting to Zenduty: {}".format(e))
 
     def post_receive(self, alert, **kwargs):
         INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
@@ -78,10 +81,13 @@ class ServiceIntegration(PluginBase):
         payload["entity_id"] = alert.id
         payload["payload"] = alert.serialize
 
-        LOG.debug(
-            requests.post(
-                "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
-                headers={"Content-Type": "application/json"},
-                data=json.dumps(payload, default=str),
+        try:
+            LOG.debug(
+                requests.post(
+                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                    headers={"Content-Type": "application/json"},
+                    data=json.dumps(payload, default=str),
+                )
             )
-        )
+        except Exception as e:
+            LOG.error("Error connecting to Zenduty: {}".format(e))
