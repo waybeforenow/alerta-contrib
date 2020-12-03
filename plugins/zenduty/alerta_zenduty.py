@@ -31,7 +31,7 @@ class ServiceIntegration(PluginBase):
     def pre_receive(self, alert):
         return alert
 
-    def status_change(self, alert, status, text):
+    def status_change(self, alert, status, text, **kwargs):
         INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
 
         if status not in ["ack", "assign"]:
