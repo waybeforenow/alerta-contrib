@@ -28,6 +28,33 @@ class ServiceIntegration(PluginBase):
 
         return ret
 
+    def pre_receive(self, alert):
+        return alert
+
+    def status_change(self, alert, status, text):
+        if status not in ["ack", "assign"]:
+            return
+
+        payload = {}
+
+        payload["message"] = "%s: %s alert for %s - %s is %s" % (
+            alert.environment,
+            alert.severity.capitalize(),
+            ",".join(alert.service),
+            alert.resource,
+            alert.event,
+        )
+        payload["alert_type"] = "acknowledged"
+        payload["entity_id"] = alert.id
+        payload["payload"] = alert
+
+        LOG.debug(
+            requests.post(
+                "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                json=payload,
+            )
+        )
+
     def post_receive(self, alert, **kwargs):
         INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
 
@@ -47,7 +74,7 @@ class ServiceIntegration(PluginBase):
         payload["entity_id"] = alert.id
         payload["payload"] = alert
 
-        print(
+        LOG.debug(
             requests.post(
                 "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
                 json=payload,
