@@ -48,7 +48,7 @@ class ServiceIntegration(PluginBase):
         )
         payload["alert_type"] = "acknowledged"
         payload["entity_id"] = alert.id
-        payload["payload"] = alert
+        payload["payload"] = alert.serialize
 
         LOG.debug(
             requests.post(
@@ -74,7 +74,7 @@ class ServiceIntegration(PluginBase):
         )
         payload["alert_type"] = self._get_alert_type(alert)
         payload["entity_id"] = alert.id
-        payload["payload"] = alert
+        payload["payload"] = alert.serialize
 
         LOG.debug(
             requests.post(
