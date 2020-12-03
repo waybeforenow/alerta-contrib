@@ -52,6 +52,7 @@ class ServiceIntegration(PluginBase):
         payload["payload"] = json.dumps(alert.serialize, default=str)
 
         try:
+            LOG.debug(payload)
             LOG.debug(
                 requests.post(
                     "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
@@ -81,6 +82,7 @@ class ServiceIntegration(PluginBase):
         payload["payload"] = json.dumps(alert.serialize, default=str)
 
         try:
+            LOG.debug(payload)
             LOG.debug(
                 requests.post(
                     "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
