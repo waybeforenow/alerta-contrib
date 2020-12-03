@@ -52,9 +52,10 @@ class ServiceIntegration(PluginBase):
         payload["payload"] = alert.serialize
 
         try:
+            LOG.debug(json.dumps(payload, default=str))
             LOG.debug(
                 requests.post(
-                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                    "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
                     headers={"Content-Type": "application/json"},
                     data=json.dumps(payload, default=str),
                 )
@@ -82,9 +83,10 @@ class ServiceIntegration(PluginBase):
         payload["payload"] = alert.serialize
 
         try:
+            LOG.debug(json.dumps(payload, default=str))
             LOG.debug(
                 requests.post(
-                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
+                    "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
                     headers={"Content-Type": "application/json"},
                     data=json.dumps(payload, default=str),
                 ).text
