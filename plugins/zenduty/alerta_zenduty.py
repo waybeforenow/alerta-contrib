@@ -49,15 +49,13 @@ class ServiceIntegration(PluginBase):
         )
         payload["alert_type"] = "acknowledged"
         payload["entity_id"] = alert.id
-        payload["payload"] = alert.serialize
+        payload["payload"] = json.dumps(alert.serialize, default=str)
 
         try:
-            LOG.debug(json.dumps(payload, default=str))
             LOG.debug(
                 requests.post(
                     "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
-                    headers={"Content-Type": "application/json"},
-                    data=json.dumps(payload, default=str),
+                    json=payload,
                 )
             ).text
         except Exception as e:
@@ -80,15 +78,13 @@ class ServiceIntegration(PluginBase):
         )
         payload["alert_type"] = self._get_alert_type(alert)
         payload["entity_id"] = alert.id
-        payload["payload"] = alert.serialize
+        payload["payload"] = json.dumps(alert.serialize, default=str)
 
         try:
-            LOG.debug(json.dumps(payload, default=str))
             LOG.debug(
                 requests.post(
                     "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
-                    headers={"Content-Type": "application/json"},
-                    data=json.dumps(payload, default=str),
+                    json=payload,
                 ).text
             )
         except Exception as e:
