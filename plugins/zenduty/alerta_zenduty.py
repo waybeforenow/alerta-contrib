@@ -54,7 +54,7 @@ class ServiceIntegration(PluginBase):
         try:
             LOG.debug(
                 requests.post(
-                    "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
+                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
                     json=payload,
                 )
             ).text
@@ -83,7 +83,7 @@ class ServiceIntegration(PluginBase):
         try:
             LOG.debug(
                 requests.post(
-                    "https://www.zenduty.com/api/events/{}".format(INTEGRATION_KEY),
+                    "https://www.zenduty.com/api/events/{}/".format(INTEGRATION_KEY),
                     json=payload,
                 ).text
             )
