@@ -56,6 +56,11 @@ class ServiceIntegration(PluginBase):
             return
 
         payload = self._create_payload(alert)
+        if payload["alert_type"] == "warning":
+            return
+        if alert.environment != "Production":
+            return
+
         payload["alert_type"] = "acknowledged"
 
         try:
@@ -76,6 +81,10 @@ class ServiceIntegration(PluginBase):
             return
 
         payload = self._create_payload(alert)
+        if payload["alert_type"] == "warning":
+            return
+        if alert.environment != "Production":
+            return
 
         try:
             r = requests.post(
