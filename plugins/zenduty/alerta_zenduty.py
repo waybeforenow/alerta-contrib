@@ -32,16 +32,17 @@ class ServiceIntegration(PluginBase):
     def _create_payload(self, alert):
         payload = {}
 
-        payload["message"] = "%s: %s alert for %s - %s is %s" % (
+        payload["message"] = "%s: %s alert for %s with status %s" % (
             alert.environment,
             alert.severity.capitalize(),
-            ",".join(alert.service),
             alert.resource,
             alert.event,
         )
         payload["alert_type"] = self._get_alert_type(alert)
         payload["entity_id"] = alert.id.replace("-", "")
         payload["payload"] = alert.serialize
+        if alert.text:
+            payload["summary"] = alert.text
 
         return payload
 
@@ -71,7 +72,7 @@ class ServiceIntegration(PluginBase):
     def post_receive(self, alert, **kwargs):
         INTEGRATION_KEY = self.get_config("ZENDUTY_INTEGRATION_KEY", type=str, **kwargs)
 
-        if alert.repeat:
+        if alert is None or alert.repeat:
             return
 
         payload = self._create_payload(alert)
